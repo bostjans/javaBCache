@@ -41,23 +41,28 @@ public class MemoryBCache implements BCache {
         return add(asKey, aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
     }
 
-    @Override
-    public boolean add(String asKey, Object aobjVal, long periodInMillis) {
-        cleanUp();
-
-        if (asKey == null) {
+    private boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+        if (asKey == null)
             return false;
-        }
+        if (objCache.size() >= nCountOfElementsMax)
+            return false;
+
         if (aobjVal == null) {
             objCache.remove(asKey);
         } else {
-            long expiryTime = System.currentTimeMillis() + periodInMillis;
-            objCache.put(asKey, new SoftReference<>(new CacheObject(aobjVal, expiryTime)));
+            long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
+            objCache.put(asKey, new SoftReference<>(new CacheObject(aobjVal, adtValid, expiryTime)));
         }
         return true;
     }
+
     @Override
-    public boolean addNotExist(String asKey, Object aobjVal, long periodInMillis) {
+    public boolean add(String asKey, Object aobjVal, long aiPeriodInMillis) {
+        cleanUp();
+        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+    }
+    @Override
+    public boolean addNotExist(String asKey, Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
 
         if (asKey == null) {
@@ -66,7 +71,22 @@ public class MemoryBCache implements BCache {
         if (objCache.containsKey(asKey)) {
             return false;
         }
-        return add(asKey, aobjVal, periodInMillis);
+        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+    }
+    //@Override
+    public boolean addIfNewer(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+        cleanUp();
+
+        if (asKey == null) {
+            return false;
+        }
+        CacheObject objInCache = getCacheObject(asKey);
+        if (objInCache != null) {
+            if (objInCache.getAddTime() < adtValid) {
+                return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
+            }
+        }
+        return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
     }
 
 
@@ -75,14 +95,7 @@ public class MemoryBCache implements BCache {
         objCache.remove(asKey);
     }
 
-    @Override
-    public Object get(String asKey) {
-        //return Optional.ofNullable(objCache.get(asKey)).map(SoftReference::get)
-        //        .filter(cacheObject -> !cacheObject.isExpired())
-        //        .map(CacheObject::getValue)
-        //        .orElse(null);
-        cleanUp();
-
+    private CacheObject getCacheObject(String asKey) {
         CacheObject objInCache = null;
         SoftReference objInCacheR = objCache.get(asKey);
 
@@ -92,8 +105,20 @@ public class MemoryBCache implements BCache {
             if (objInCache.isExpired()) return null;
             objInCache.setLastUsedTimeNow();
             objInCache.incCount();
-            return objInCache.getValue();
+            return objInCache;
         }
+        return null;
+    }
+    @Override
+    public Object get(String asKey) {
+        //return Optional.ofNullable(objCache.get(asKey)).map(SoftReference::get)
+        //        .filter(cacheObject -> !cacheObject.isExpired())
+        //        .map(CacheObject::getValue)
+        //        .orElse(null);
+        cleanUp();
+
+        CacheObject objInCache = getCacheObject(asKey);
+        if (objInCache != null) return objInCache.getValue();
         return null;
     }
 
@@ -116,7 +141,8 @@ public class MemoryBCache implements BCache {
         String  sReturn;
         boolean bTemp = true;
 
-        sReturn = "(Count: " + size() + ")";
+        sReturn = "(Count: " + size() + "";
+        sReturn += "/Max.: " + nCountOfElementsMax + ")";
         sReturn += " (Keys: ";
         for (String sLoop : objCache.keySet()) {
             if (bTemp) bTemp = false;
@@ -135,11 +161,7 @@ public class MemoryBCache implements BCache {
         //        .map(CacheObject::isExpired)
         //        .orElse(false));
         for (String sLoop : objCache.keySet()) {
-            SoftReference objInCacheR = objCache.get(sLoop);
-            CacheObject objInCache = null;
-
-            if (objInCacheR != null)
-                objInCache = (CacheObject) objInCacheR.get();
+            CacheObject objInCache = getCacheObject(sLoop);
             if (objInCache != null) {
                 if (objInCache.isExpired()) arrKey.add(sLoop);
             }
@@ -160,8 +182,9 @@ public class MemoryBCache implements BCache {
         private long countUsed = 0L;
         private Object value;
 
-        public CacheObject(Object aobjVal, long anExpiryTime) {
-            addTime = System.currentTimeMillis();
+        public CacheObject(Object aobjVal, long anAddTime, long anExpiryTime) {
+            //addTime = System.currentTimeMillis();
+            addTime = anAddTime;
             expiryTime = anExpiryTime;
             value = aobjVal;
         }
