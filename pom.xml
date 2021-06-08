@@ -1,0 +1,117 @@
+<project>
+    <!-- model version is always 4.0.0 for Maven 2.x POMs -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- project coordinates .. -->
+    <groupId>com.stupica.base</groupId>
+    <artifactId>cacheCore</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>cacheCore</name>
+    <organization>
+        <name>developer.stupica.com</name>
+        <url>http://www.stupica.com</url>
+    </organization>
+    <url>http://developer.stupica.com/maven/</url>
+
+    <properties>
+        <java-version>1.8</java-version>
+        <maven.compiler.source>${java-version}</maven.compiler.source>
+        <maven.compiler.target>${java-version}</maven.compiler.target>
+
+        <!-- ID identifier - in settings.xml: servers -->
+        <project.scm.id>github</project.scm.id>
+    </properties>
+
+    <!-- library dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>com.stupica.base</groupId>
+            <artifactId>globalVar</artifactId>
+            <version>[1,2)</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>[4.13,5)</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <!-- stupica.com - Developer404 Release Repository - ->
+        <repository>
+            <id>bDevRelease</id>
+            <name>Developer404 Repository</name>
+            <url>http://developer.stupica.com/maven</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        -->
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Specification-Version>${project.version}</Specification-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>[3.3,3.4)</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <distributionManagement>
+        <!--
+        <repository>
+            <id>bDevRelease</id>
+            <url>ftp://developer.stupica.com/maven2</url>
+        </repository>
+        -->
+        <repository>
+            <id>bDevRelease2</id>
+            <url>ftp://developer.dev404.net/maven2</url>
+        </repository>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>bostjanst</id>
+            <name>Bostjan Stupica</name>
+            <email>bostjan@stupica.com</email>
+            <url>http://www.stupica.com</url>
+            <organization>Developer404</organization>
+            <organizationUrl>http://www.stupica.com</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+                <role>admin</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
+            <properties>
+                <picUrl>http://bostjan.dev404.net/about_me/myimg01.jpg</picUrl>
+            </properties>
+        </developer>
+    </developers>
+
+</project>
