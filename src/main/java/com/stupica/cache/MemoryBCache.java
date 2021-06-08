@@ -4,18 +4,21 @@ package com.stupica.cache;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MemoryBCache implements BCache {
 
+    private final int   nMAX_COUNT_ELEMENT_DEF = 1000;
     private final int   nPERIOD_RETENTION_SEC_DEF = 60 * 10;    // = 10 min;
-    //private static final int CLEAN_UP_PERIOD_IN_SEC = 5;
+    private static final int CLEAN_UP_PERIOD_IN_SEC = 5;
+
+    protected long          nCountOfElementsMax;
 
     private final ConcurrentHashMap<String, SoftReference<CacheObject>> objCache = new ConcurrentHashMap<>();
 
     public MemoryBCache() {
+        nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
 //        Thread cleanerThread = new Thread(() -> {
 //            while (!Thread.currentThread().isInterrupted()) {
 //                try {
@@ -29,6 +32,10 @@ public class MemoryBCache implements BCache {
 //        cleanerThread.setDaemon(true);
 //        cleanerThread.start();
     }
+    public MemoryBCache(long anCountOfElementsMax) {
+        nCountOfElementsMax = anCountOfElementsMax;
+    }
+
 
     public boolean add(String asKey, Object aobjVal) {
         return add(asKey, aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
@@ -105,13 +112,28 @@ public class MemoryBCache implements BCache {
         return objCache.size();
     }
 
+    public String toString() {
+        String  sReturn;
+        boolean bTemp = true;
+
+        sReturn = "(Count: " + size() + ")";
+        sReturn += " (Keys: ";
+        for (String sLoop : objCache.keySet()) {
+            if (bTemp) bTemp = false;
+            else sReturn += "; ";
+            sReturn += sLoop;
+        }
+        sReturn += ")";
+        return sReturn;
+    }
+
 
     protected void cleanUp() {
         List    arrKey = new ArrayList<String>();
 
-        objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
-                .map(CacheObject::isExpired)
-                .orElse(false));
+        //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
+        //        .map(CacheObject::isExpired)
+        //        .orElse(false));
         for (String sLoop : objCache.keySet()) {
             SoftReference objInCacheR = objCache.get(sLoop);
             CacheObject objInCache = null;
