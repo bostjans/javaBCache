@@ -85,8 +85,9 @@ public class MemoryBCache implements BCache {
             if (objInCache.isExpired()) return null;
             objInCache.setLastUsedTimeNow();
             objInCache.incCount();
+            return objInCache.getValue();
         }
-        return objInCache.getValue();
+        return null;
     }
 
     @Override
