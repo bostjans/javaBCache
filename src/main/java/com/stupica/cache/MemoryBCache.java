@@ -3,22 +3,20 @@ package com.stupica.cache;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class MemoryBCache implements BCache {
+public class MemoryBCache extends MemoryBBase implements BCache {
 
-    private final int   nMAX_COUNT_ELEMENT_DEF = 1000;
-    private final int   nPERIOD_RETENTION_SEC_DEF = 60 * 10;    // = 10 min;
-    private static final int CLEAN_UP_PERIOD_IN_SEC = 5;
+    //private final ConcurrentHashMap<String, SoftReference<CacheObject>> objCache = new ConcurrentHashMap<>();
 
-    protected long          nCountOfElementsMax;
-
-    private final ConcurrentHashMap<String, SoftReference<CacheObject>> objCache = new ConcurrentHashMap<>();
 
     public MemoryBCache() {
         nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
+        init();
 //        Thread cleanerThread = new Thread(() -> {
 //            while (!Thread.currentThread().isInterrupted()) {
 //                try {
@@ -34,14 +32,16 @@ public class MemoryBCache implements BCache {
     }
     public MemoryBCache(long anCountOfElementsMax) {
         nCountOfElementsMax = anCountOfElementsMax;
+        init();
     }
 
 
-    public boolean add(String asKey, Object aobjVal) {
-        return add(asKey, aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
+    protected void init() {
+        objCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>();
     }
 
-    private boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+
+    protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
         if (asKey == null)
             return false;
         if (objCache.size() >= nCountOfElementsMax)
@@ -56,11 +56,11 @@ public class MemoryBCache implements BCache {
         return true;
     }
 
-    @Override
-    public boolean add(String asKey, Object aobjVal, long aiPeriodInMillis) {
-        cleanUp();
-        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
-    }
+    //@Override
+    //public boolean add(String asKey, Object aobjVal, long aiPeriodInMillis) {
+    //    cleanUp();
+    //    return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+    //}
     @Override
     public boolean addNotExist(String asKey, Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
@@ -90,14 +90,14 @@ public class MemoryBCache implements BCache {
     }
 
 
-    @Override
-    public void remove(String asKey) {
-        objCache.remove(asKey);
-    }
+    //@Override
+    //public void remove(String asKey) {
+    //    objCache.remove(asKey);
+    //}
 
-    private CacheObject getCacheObject(String asKey) {
+    protected CacheObject getCacheObject(String asKey) {
         CacheObject objInCache = null;
-        SoftReference objInCacheR = objCache.get(asKey);
+        SoftReference objInCacheR = (SoftReference) objCache.get(asKey);
 
         if (objInCacheR != null)
             objInCache = (CacheObject) objInCacheR.get();
@@ -109,45 +109,50 @@ public class MemoryBCache implements BCache {
         }
         return null;
     }
-    @Override
-    public Object get(String asKey) {
+    //@Override
+    //public Object get(String asKey) {
         //return Optional.ofNullable(objCache.get(asKey)).map(SoftReference::get)
         //        .filter(cacheObject -> !cacheObject.isExpired())
         //        .map(CacheObject::getValue)
         //        .orElse(null);
-        cleanUp();
+    //    cleanUp();
 
-        CacheObject objInCache = getCacheObject(asKey);
-        if (objInCache != null) return objInCache.getValue();
-        return null;
-    }
+    //    CacheObject objInCache = getCacheObject(asKey);
+    //    if (objInCache != null) return objInCache.getValue();
+    //    return null;
+    //}
 
-    @Override
-    public void clear() {
-        objCache.clear();
-    }
+    //@Override
+    //public void clear() {
+    //    objCache.clear();
+    //}
 
-    @Override
-    public long size() {
+    //@Override
+    //public long size() {
         //return objCache.entrySet().stream().filter(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
         //        .map(cacheObject -> !cacheObject.isExpired())
         //        .orElse(false))
         //        .count();
-        cleanUp();
-        return objCache.size();
-    }
+    //    cleanUp();
+    //    return objCache.size();
+    //}
 
     public String toString() {
         String  sReturn;
         boolean bTemp = true;
+        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
 
         sReturn = "(Count: " + size() + "";
         sReturn += "/Max.: " + nCountOfElementsMax + ")";
         sReturn += " (Keys: ";
-        for (String sLoop : objCache.keySet()) {
+        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
+        while (objIt.hasNext()) {
+        //for (String sLoop : objCache.keySet()) {
+            objMapEntry = objIt.next();
+            //i += pair.getKey() + pair.getValue();
             if (bTemp) bTemp = false;
             else sReturn += "; ";
-            sReturn += sLoop;
+            sReturn += objMapEntry.getKey();
         }
         sReturn += ")";
         return sReturn;
@@ -156,52 +161,26 @@ public class MemoryBCache implements BCache {
 
     protected void cleanUp() {
         List    arrKey = new ArrayList<String>();
+        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
 
         //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
         //        .map(CacheObject::isExpired)
         //        .orElse(false));
-        for (String sLoop : objCache.keySet()) {
-            CacheObject objInCache = getCacheObject(sLoop);
+        if (objCache.size() < 1)
+            return;
+        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
+        while (objIt.hasNext()) {
+        //for (String sLoop : objCache.keySet()) {
+            objMapEntry = objIt.next();
+            CacheObject objInCache = getCacheObject(objMapEntry.getKey());
             if (objInCache != null) {
-                if (objInCache.isExpired()) arrKey.add(sLoop);
+                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
             }
         }
         if (!arrKey.isEmpty()) {
             for (Object sLoop : arrKey) {
                 remove((String) sLoop);
             }
-        }
-    }
-
-
-    private static class CacheObject {
-
-        private long addTime;
-        private long lastUsedTime;
-        private long expiryTime;
-        private long countUsed = 0L;
-        private Object value;
-
-        public CacheObject(Object aobjVal, long anAddTime, long anExpiryTime) {
-            //addTime = System.currentTimeMillis();
-            addTime = anAddTime;
-            expiryTime = anExpiryTime;
-            value = aobjVal;
-        }
-        public long getAddTime() { return addTime; }
-        public long getLastUsedTime() { return lastUsedTime; }
-        public long getExpiryTime() { return expiryTime; }
-        public long getCountUsed() { return countUsed; }
-
-        public void setExpiryTime(long anTime) { expiryTime = anTime; }
-        public void setLastUsedTimeNow() { lastUsedTime = System.currentTimeMillis(); }
-        public void incCount() { countUsed++; }
-
-        public Object getValue() { return value; }
-        public void setValue(Object aobjVal) { value = aobjVal; }
-
-        boolean isExpired() {
-            return System.currentTimeMillis() > expiryTime;
         }
     }
 }
