@@ -2,6 +2,7 @@ package com.stupica.cache;
 
 
 import java.util.Map;
+import java.util.Set;
 
 
 public class MemoryBBase {
@@ -34,6 +35,10 @@ public class MemoryBBase {
         objCache.remove(asKey);
     }
 
+    protected MemoryBBase.CacheObject getCacheObjectNoCheck(String asKey) {
+        MemoryBBase.CacheObject objInCache = (MemoryBBase.CacheObject) objCache.get(asKey);
+        return objInCache;
+    }
     protected MemoryBBase.CacheObject getCacheObject(String asKey) {
         MemoryBBase.CacheObject objInCache = (MemoryBBase.CacheObject) objCache.get(asKey);
         if (objInCache != null) {
@@ -55,6 +60,11 @@ public class MemoryBBase {
         CacheObject objInCache = getCacheObject(asKey);
         if (objInCache != null) return objInCache.getValue();
         return null;
+    }
+
+    public Set getKeyAll() {
+        cleanUp();
+        return objCache.keySet();
     }
 
     //@Override
@@ -103,6 +113,7 @@ public class MemoryBBase {
         public void setValue(Object aobjVal) { value = aobjVal; }
 
         boolean isExpired() {
+            //System.out.println("isExpired(): TS: " + System.currentTimeMillis() + "; expiryTime: " + expiryTime);
             return System.currentTimeMillis() > expiryTime;
         }
     }

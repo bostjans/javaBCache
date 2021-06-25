@@ -95,12 +95,17 @@ public class MemoryBCache extends MemoryBBase implements BCache {
     //    objCache.remove(asKey);
     //}
 
-    protected CacheObject getCacheObject(String asKey) {
+    protected MemoryBBase.CacheObject getCacheObjectNoCheck(String asKey) {
         CacheObject objInCache = null;
         SoftReference objInCacheR = (SoftReference) objCache.get(asKey);
 
         if (objInCacheR != null)
             objInCache = (CacheObject) objInCacheR.get();
+        return objInCache;
+    }
+    protected CacheObject getCacheObject(String asKey) {
+        CacheObject objInCache = getCacheObjectNoCheck(asKey);
+
         if (objInCache != null) {
             if (objInCache.isExpired()) return null;
             objInCache.setLastUsedTimeNow();
@@ -172,7 +177,7 @@ public class MemoryBCache extends MemoryBBase implements BCache {
         while (objIt.hasNext()) {
         //for (String sLoop : objCache.keySet()) {
             objMapEntry = objIt.next();
-            CacheObject objInCache = getCacheObject(objMapEntry.getKey());
+            CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
             if (objInCache != null) {
                 if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
             }

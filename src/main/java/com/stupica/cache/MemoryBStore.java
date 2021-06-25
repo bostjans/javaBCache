@@ -55,21 +55,6 @@ public class MemoryBStore extends MemoryBBase implements BStore {
         }
         return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
-    //@Override
-//    public boolean addIfNewer(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
-//        cleanUp();
-//
-//        if (asKey == null) {
-//            return false;
-//        }
-//        MemoryBBase.CacheObject objInCache = getCacheObject(asKey);
-//        if (objInCache != null) {
-//            if (objInCache.getAddTime() < adtValid) {
-//                return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
-//            }
-//        }
-//        return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
-//    }
 
 
     public String toString() {
@@ -96,18 +81,21 @@ public class MemoryBStore extends MemoryBBase implements BStore {
         List arrKey = new ArrayList<String>();
         Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
 
+        //System.out.println("cleanUp(): Start ..  -  size: " + objCache.size());
         Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
         while (objIt.hasNext()) {
             objMapEntry = objIt.next();
-            MemoryBBase.CacheObject objInCache = getCacheObject(objMapEntry.getKey());
+            MemoryBBase.CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
             if (objInCache != null) {
                 if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
             }
         }
         if (!arrKey.isEmpty()) {
             for (Object sLoop : arrKey) {
+                //System.out.println("cleanUp(): remove: " + sLoop);
                 remove((String) sLoop);
             }
         }
+        //System.out.println("cleanUp(): Stop ..  -  size: " + objCache.size());
     }
 }
