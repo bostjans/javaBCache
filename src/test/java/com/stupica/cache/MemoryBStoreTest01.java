@@ -1,6 +1,9 @@
 package com.stupica.cache;
 
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -17,18 +20,13 @@ public class MemoryBStoreTest01 {
     private MemoryBStore    objCache;
 
 
-    @org.junit.Before
+    @BeforeEach
     public void setUp() throws Exception {
         objRand = new Random(); //instance of random class
         objCache = new MemoryBStore();
     }
 
-    @org.junit.After
-    public void tearDown() throws Exception {
-    }
-
-
-    @org.junit.Test
+    @Test
     public void addThread11() {
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);

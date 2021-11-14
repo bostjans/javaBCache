@@ -1,20 +1,23 @@
 package com.stupica.cache;
 
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class MemoryBBase {
 
-    protected final int   nMAX_COUNT_ELEMENT_DEF = 1000;
+    protected final int   nMAX_COUNT_ELEMENT_DEF = 10000;
     protected final int   nPERIOD_RETENTION_SEC_DEF = 60 * 10;    // = 10 min;
-    protected static final int CLEAN_UP_PERIOD_IN_SEC = 5;
+    //protected static final int CLEAN_UP_PERIOD_IN_SEC = 5;
 
+    protected final long    nCountOfElementsMax2Print = 100;
     protected long          nCountOfElementsMax;
 
+    //protected long          nTsCreated = 0L;
+    protected long          nTsCleanUpLast = 0L;
+    protected long          nTsCleanUpDeltaMax = 1000L;
+
     protected Map objCache = null;
-    //protected final ConcurrentHashMap objCache = null;
 
 
     protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
@@ -70,6 +73,7 @@ public class MemoryBBase {
     //@Override
     public void clear() {
         objCache.clear();
+        nTsCleanUpLast = System.currentTimeMillis();
     }
 
     //@Override
@@ -82,7 +86,35 @@ public class MemoryBBase {
         return objCache.size();
     }
 
-    protected void cleanUp() {
+    protected <E> void cleanUp() {
+        List                    arrKey = new ArrayList<String>();
+        Map.Entry<String, E>    objMapEntry = null;
+        long                    nTsCleanUpDelta;
+
+        nTsCleanUpDelta = System.currentTimeMillis() - nTsCleanUpLast;
+        if (nTsCleanUpDelta < nTsCleanUpDeltaMax) {
+            nTsCleanUpLast = System.currentTimeMillis();
+            return;
+        }
+        nTsCleanUpLast = System.currentTimeMillis();
+        //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
+        //        .map(CacheObject::isExpired)
+        //        .orElse(false));
+        if (objCache.size() < 1)
+            return;
+        Iterator<Map.Entry<String, E>> objIt = objCache.entrySet().iterator();
+        while (objIt.hasNext()) {
+            objMapEntry = objIt.next();
+            CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
+            if (objInCache != null) {
+                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
+            }
+        }
+        if (!arrKey.isEmpty()) {
+            for (Object sLoop : arrKey) {
+                remove((String) sLoop);
+            }
+        }
     }
 
 

@@ -5,7 +5,7 @@
     <!-- project coordinates .. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>cacheCore</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>cacheCore</name>
     <organization>
@@ -33,9 +33,9 @@
         </dependency>
         -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>[4.13,5)</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>[5.8,6)</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

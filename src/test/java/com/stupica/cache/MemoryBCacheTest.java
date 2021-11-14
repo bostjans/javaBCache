@@ -1,7 +1,11 @@
 package com.stupica.cache;
 
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class MemoryBCacheTest {
@@ -9,16 +13,16 @@ public class MemoryBCacheTest {
     private MemoryBCache    objCache;
 
 
-    @org.junit.Before
+    @BeforeEach
     public void setUp() throws Exception {
         objCache = new MemoryBCache();
     }
 
-    @org.junit.After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
-    @org.junit.Test
+    @Test
     public void add11() {
         // Initialization
         System.out.println("--");
@@ -28,20 +32,20 @@ public class MemoryBCacheTest {
         System.out.println(".. after add > size: " + objCache.size());
         assertEquals(1, objCache.size());
     }
-    @org.junit.Test
+    @Test
     public void add12() {
         // Initialization
         System.out.println("--");
         System.out.println("Test: testAdd11() - " + this.getClass().getName());
 
         objCache.add("A", Integer.valueOf(1));
-        objCache.add("A", Integer.valueOf(2));
+        objCache.add("A", Integer.valueOf(11));
         System.out.println(".. after add > size: " + objCache.size());
         System.out.println(".. value: " + (Integer) objCache.get("A"));
         assertEquals(1, objCache.size());
     }
 
-    @org.junit.Test
+    @Test
     public void clear() {
         // Initialization
         System.out.println("--");
@@ -53,7 +57,7 @@ public class MemoryBCacheTest {
         assertEquals(0, objCache.size());
     }
 
-    @org.junit.Test
+    @Test
     public void size() {
         // Initialization
         System.out.println("--");

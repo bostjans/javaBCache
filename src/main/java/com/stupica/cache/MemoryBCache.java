@@ -2,17 +2,12 @@ package com.stupica.cache;
 
 
 import java.lang.ref.SoftReference;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MemoryBCache extends MemoryBBase implements BCache {
-
-    //private final ConcurrentHashMap<String, SoftReference<CacheObject>> objCache = new ConcurrentHashMap<>();
-
 
     public MemoryBCache() {
         nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
@@ -32,12 +27,17 @@ public class MemoryBCache extends MemoryBBase implements BCache {
     }
     public MemoryBCache(long anCountOfElementsMax) {
         nCountOfElementsMax = anCountOfElementsMax;
-        init();
+        init(anCountOfElementsMax);
     }
 
 
     protected void init() {
         objCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>();
+        nTsCleanUpLast = System.currentTimeMillis();
+    }
+    protected void init(long anCountOfElementsMax) {
+        objCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>((int) anCountOfElementsMax);
+        nTsCleanUpLast = System.currentTimeMillis();
     }
 
 
@@ -144,7 +144,8 @@ public class MemoryBCache extends MemoryBBase implements BCache {
 
     public String toString() {
         String  sReturn;
-        boolean bTemp = true;
+        long    iCountPrint = 0;
+        boolean bFirstEl = true;
         Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
 
         sReturn = "(Count: " + size() + "";
@@ -152,40 +153,44 @@ public class MemoryBCache extends MemoryBBase implements BCache {
         sReturn += " (Keys: ";
         Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
         while (objIt.hasNext()) {
-        //for (String sLoop : objCache.keySet()) {
             objMapEntry = objIt.next();
+            iCountPrint++;
             //i += pair.getKey() + pair.getValue();
-            if (bTemp) bTemp = false;
+            if (bFirstEl) bFirstEl = false;
             else sReturn += "; ";
             sReturn += objMapEntry.getKey();
+            if (iCountPrint > nCountOfElementsMax2Print) {
+                sReturn += "; ..";
+                break;
+            }
         }
         sReturn += ")";
         return sReturn;
     }
 
 
-    protected void cleanUp() {
-        List    arrKey = new ArrayList<String>();
-        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
-
-        //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
-        //        .map(CacheObject::isExpired)
-        //        .orElse(false));
-        if (objCache.size() < 1)
-            return;
-        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
-        while (objIt.hasNext()) {
-        //for (String sLoop : objCache.keySet()) {
-            objMapEntry = objIt.next();
-            CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
-            if (objInCache != null) {
-                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
-            }
-        }
-        if (!arrKey.isEmpty()) {
-            for (Object sLoop : arrKey) {
-                remove((String) sLoop);
-            }
-        }
-    }
+//    protected void cleanUp() {
+//        List    arrKey = new ArrayList<String>();
+//        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
+//
+//        //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
+//        //        .map(CacheObject::isExpired)
+//        //        .orElse(false));
+//        if (objCache.size() < 1)
+//            return;
+//        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
+//        while (objIt.hasNext()) {
+//        //for (String sLoop : objCache.keySet()) {
+//            objMapEntry = objIt.next();
+//            CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
+//            if (objInCache != null) {
+//                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
+//            }
+//        }
+//        if (!arrKey.isEmpty()) {
+//            for (Object sLoop : arrKey) {
+//                remove((String) sLoop);
+//            }
+//        }
+//    }
 }

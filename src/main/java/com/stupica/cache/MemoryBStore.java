@@ -1,17 +1,12 @@
 package com.stupica.cache;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MemoryBStore extends MemoryBBase implements BStore {
-
-    //private final ConcurrentHashMap<String, MemoryBCache.CacheObject> objStore = new ConcurrentHashMap<>();
-
 
     public MemoryBStore() {
         nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
@@ -25,6 +20,11 @@ public class MemoryBStore extends MemoryBBase implements BStore {
 
     protected void init() {
         objCache = new ConcurrentHashMap<String, MemoryBBase.CacheObject>();
+        nTsCleanUpLast = System.currentTimeMillis();
+    }
+    protected void init(long anCountOfElementsMax) {
+        objCache = new ConcurrentHashMap<String, MemoryBBase.CacheObject>((int) anCountOfElementsMax);
+        nTsCleanUpLast = System.currentTimeMillis();
     }
 
 
@@ -59,7 +59,8 @@ public class MemoryBStore extends MemoryBBase implements BStore {
 
     public String toString() {
         String  sReturn;
-        boolean bTemp = true;
+        long    iCountPrint = 0;
+        boolean bFirstEl = true;
         Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
 
         sReturn = "(Count: " + size() + "";
@@ -68,34 +69,38 @@ public class MemoryBStore extends MemoryBBase implements BStore {
         Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
         while (objIt.hasNext()) {
             objMapEntry = objIt.next();
-            if (bTemp) bTemp = false;
+            iCountPrint++;
+            if (bFirstEl) bFirstEl = false;
             else sReturn += "; ";
             sReturn += objMapEntry.getKey();
+            if (iCountPrint > nCountOfElementsMax2Print) {
+                sReturn += "; ..";
+                break;
+            }
         }
         sReturn += ")";
         return sReturn;
     }
 
 
-    protected void cleanUp() {
-        List arrKey = new ArrayList<String>();
-        Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
-
-        //System.out.println("cleanUp(): Start ..  -  size: " + objCache.size());
-        Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
-        while (objIt.hasNext()) {
-            objMapEntry = objIt.next();
-            MemoryBBase.CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
-            if (objInCache != null) {
-                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
-            }
-        }
-        if (!arrKey.isEmpty()) {
-            for (Object sLoop : arrKey) {
-                //System.out.println("cleanUp(): remove: " + sLoop);
-                remove((String) sLoop);
-            }
-        }
-        //System.out.println("cleanUp(): Stop ..  -  size: " + objCache.size());
-    }
+//    protected void cleanUp() {
+//        List arrKey = new ArrayList<String>();
+//        Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
+//
+//        //System.out.println("cleanUp(): Start ..  -  size: " + objCache.size());
+//        Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
+//        while (objIt.hasNext()) {
+//            objMapEntry = objIt.next();
+//            MemoryBBase.CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
+//            if (objInCache != null) {
+//                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
+//            }
+//        }
+//        if (!arrKey.isEmpty()) {
+//            for (Object sLoop : arrKey) {
+//                //System.out.println("cleanUp(): remove: " + sLoop);
+//                remove((String) sLoop);
+//            }
+//        }
+//    }
 }
