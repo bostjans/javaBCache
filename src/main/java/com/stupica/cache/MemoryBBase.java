@@ -14,6 +14,7 @@ public class MemoryBBase {
     protected long          nCountOfElementsMax;
 
     //protected long          nTsCreated = 0L;
+    //protected long          nTsModifiedLast = 0L;
     protected long          nTsCleanUpLast = 0L;
     protected long          nTsCleanUpDeltaMax = 1000L;
 
