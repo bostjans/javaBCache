@@ -2,8 +2,6 @@ package com.stupica.cache;
 
 
 import java.lang.ref.SoftReference;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -127,45 +125,32 @@ public class MemoryBCache extends MemoryBBase implements BCache {
     //    return null;
     //}
 
-    //@Override
-    //public void clear() {
-    //    objCache.clear();
-    //}
-
-    //@Override
-    //public long size() {
-        //return objCache.entrySet().stream().filter(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
-        //        .map(cacheObject -> !cacheObject.isExpired())
-        //        .orElse(false))
-        //        .count();
-    //    cleanUp();
-    //    return objCache.size();
-    //}
 
     public String toString() {
-        String  sReturn;
-        long    iCountPrint = 0;
-        boolean bFirstEl = true;
-        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
-
-        sReturn = "(Count: " + size() + "";
-        sReturn += "/Max.: " + nCountOfElementsMax + ")";
-        sReturn += " (Keys: ";
-        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
-        while (objIt.hasNext()) {
-            objMapEntry = objIt.next();
-            iCountPrint++;
-            //i += pair.getKey() + pair.getValue();
-            if (bFirstEl) bFirstEl = false;
-            else sReturn += "; ";
-            sReturn += objMapEntry.getKey();
-            if (iCountPrint > nCountOfElementsMax2Print) {
-                sReturn += "; ..";
-                break;
-            }
-        }
-        sReturn += ")";
-        return sReturn;
+//        String  sReturn;
+//        long    iCountPrint = 0;
+//        boolean bFirstEl = true;
+//        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
+//
+//        sReturn = "(Count: " + size() + "";
+//        sReturn += "/Max.: " + nCountOfElementsMax + ")";
+//        sReturn += " (Keys: ";
+//        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
+//        while (objIt.hasNext()) {
+//            objMapEntry = objIt.next();
+//            iCountPrint++;
+//            //i += pair.getKey() + pair.getValue();
+//            if (bFirstEl) bFirstEl = false;
+//            else sReturn += "; ";
+//            sReturn += objMapEntry.getKey();
+//            if (iCountPrint > nCountOfElementsMax2Print) {
+//                sReturn += "; ..";
+//                break;
+//            }
+//        }
+//        sReturn += ")";
+//        return sReturn;
+        return toStringWithElem(22);
     }
 
 

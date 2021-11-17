@@ -3,7 +3,8 @@ package com.stupica.cache;
 
 public interface BCache {
 
-    //void add(String key, Object value);
+    void setCountOfElementsMax(long anCountOfElementsMax);
+
     boolean add(String asKey, Object aobjValue, long aiPeriodInMillis);
     boolean addNotExist(String asKey, Object aobjValue, long aiPeriodInMillis);
 
@@ -14,4 +15,6 @@ public interface BCache {
     void clear();
 
     long size();
+
+    String toStringShort();
 }

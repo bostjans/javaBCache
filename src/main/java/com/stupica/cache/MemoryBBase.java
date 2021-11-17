@@ -21,6 +21,10 @@ public class MemoryBBase {
     protected Map objCache = null;
 
 
+    public void setCountOfElementsMax(long anCountOfElementsMax) {
+        nCountOfElementsMax = anCountOfElementsMax;
+    }
+
     protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
         return false;
     }
@@ -116,6 +120,39 @@ public class MemoryBBase {
                 remove((String) sLoop);
             }
         }
+    }
+
+
+    public String toStringShort() {
+        return toStringWithElem(2);
+    }
+    public <E> String toStringWithElem(int anCountOfElementsMax2Print) {
+        String  sReturn;
+        long    iCountPrint = 0;
+        long    iCountPrintMax = anCountOfElementsMax2Print;
+        boolean bFirstEl = true;
+        Map.Entry<String, E> objMapEntry = null;
+
+        if (iCountPrintMax > nCountOfElementsMax2Print)
+            iCountPrintMax = nCountOfElementsMax2Print;
+        sReturn = "(Count: " + size() + "";
+        sReturn += "/Max.: " + nCountOfElementsMax + ")";
+        sReturn += " (Keys: ";
+        Iterator<Map.Entry<String, E>> objIt = objCache.entrySet().iterator();
+        while (objIt.hasNext()) {
+            objMapEntry = objIt.next();
+            iCountPrint++;
+            //i += pair.getKey() + pair.getValue();
+            if (bFirstEl) bFirstEl = false;
+            else sReturn += "; ";
+            sReturn += objMapEntry.getKey();
+            if (iCountPrint > iCountPrintMax) {
+                sReturn += "; ..";
+                break;
+            }
+        }
+        sReturn += ")";
+        return sReturn;
     }
 
 

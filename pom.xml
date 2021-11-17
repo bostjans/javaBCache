@@ -26,11 +26,6 @@
     <!-- library dependencies -->
     <dependencies>
         <!--
-        <dependency>
-            <groupId>com.stupica.base</groupId>
-            <artifactId>globalVar</artifactId>
-            <version>[1,2)</version>
-        </dependency>
         -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

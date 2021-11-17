@@ -1,8 +1,6 @@
 package com.stupica.cache;
 
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -58,28 +56,29 @@ public class MemoryBStore extends MemoryBBase implements BStore {
 
 
     public String toString() {
-        String  sReturn;
-        long    iCountPrint = 0;
-        boolean bFirstEl = true;
-        Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
-
-        sReturn = "(Count: " + size() + "";
-        sReturn += "/Max.: " + nCountOfElementsMax + ")";
-        sReturn += " (Keys: ";
-        Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
-        while (objIt.hasNext()) {
-            objMapEntry = objIt.next();
-            iCountPrint++;
-            if (bFirstEl) bFirstEl = false;
-            else sReturn += "; ";
-            sReturn += objMapEntry.getKey();
-            if (iCountPrint > nCountOfElementsMax2Print) {
-                sReturn += "; ..";
-                break;
-            }
-        }
-        sReturn += ")";
-        return sReturn;
+//        String  sReturn;
+//        long    iCountPrint = 0;
+//        boolean bFirstEl = true;
+//        Map.Entry<String, MemoryBBase.CacheObject> objMapEntry = null;
+//
+//        sReturn = "(Count: " + size() + "";
+//        sReturn += "/Max.: " + nCountOfElementsMax + ")";
+//        sReturn += " (Keys: ";
+//        Iterator<Map.Entry<String, MemoryBBase.CacheObject>> objIt = objCache.entrySet().iterator();
+//        while (objIt.hasNext()) {
+//            objMapEntry = objIt.next();
+//            iCountPrint++;
+//            if (bFirstEl) bFirstEl = false;
+//            else sReturn += "; ";
+//            sReturn += objMapEntry.getKey();
+//            if (iCountPrint > nCountOfElementsMax2Print) {
+//                sReturn += "; ..";
+//                break;
+//            }
+//        }
+//        sReturn += ")";
+//        return sReturn;
+        return toStringWithElem(22);
     }
 
 
