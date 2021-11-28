@@ -1,10 +1,7 @@
 package com.stupica.cache;
 
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 
 public class MemoryBCacheTest03 {
@@ -15,19 +12,20 @@ public class MemoryBCacheTest03 {
 
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         //aiPeriodInMillis = 1000 * 60 * 10; // 10 min;
         objCache = new MemoryBCache(aiNumberOfElementMax);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     /**
      * https://ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
      * https://www.fatalerrors.org/a/0N581Do.html
      */
+    @Disabled("Only run per request!")
     @DisplayName("Add large number of Objects - #11")
     @Test
     public void add11() {

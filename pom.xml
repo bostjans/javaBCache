@@ -5,7 +5,7 @@
     <!-- project coordinates .. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>cacheCore</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>cacheCore</name>
     <organization>
@@ -66,6 +66,29 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <includes>
+                        <include>MemoryBCacheTest.java</include>
+
+                        <include>MemoryBCacheTest01.java</include>
+                        <include>MemoryBCacheTest02.java</include>
+                        <include>MemoryBCacheTest03.java</include>
+
+                        <include>MemoryBStoreTest01.java</include>
+                    </includes>
+                    <!--
+                    <excludes>
+                        <exclude>**/TestWebDav01.java</exclude>
+                    </excludes>
+                    -->
+                </configuration>
+            </plugin>
+
         </plugins>
 
         <extensions>

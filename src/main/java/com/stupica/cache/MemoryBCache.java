@@ -5,7 +5,7 @@ import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class MemoryBCache extends MemoryBBase implements BCache {
+public class MemoryBCache extends MemoryBMap implements BCache {
 
     public MemoryBCache() {
         nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
@@ -88,12 +88,7 @@ public class MemoryBCache extends MemoryBBase implements BCache {
     }
 
 
-    //@Override
-    //public void remove(String asKey) {
-    //    objCache.remove(asKey);
-    //}
-
-    protected MemoryBBase.CacheObject getCacheObjectNoCheck(String asKey) {
+    protected CacheObject getCacheObjectNoCheck(String asKey) {
         CacheObject objInCache = null;
         SoftReference objInCacheR = (SoftReference) objCache.get(asKey);
 
@@ -112,70 +107,9 @@ public class MemoryBCache extends MemoryBBase implements BCache {
         }
         return null;
     }
-    //@Override
-    //public Object get(String asKey) {
-        //return Optional.ofNullable(objCache.get(asKey)).map(SoftReference::get)
-        //        .filter(cacheObject -> !cacheObject.isExpired())
-        //        .map(CacheObject::getValue)
-        //        .orElse(null);
-    //    cleanUp();
-
-    //    CacheObject objInCache = getCacheObject(asKey);
-    //    if (objInCache != null) return objInCache.getValue();
-    //    return null;
-    //}
 
 
     public String toString() {
-//        String  sReturn;
-//        long    iCountPrint = 0;
-//        boolean bFirstEl = true;
-//        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
-//
-//        sReturn = "(Count: " + size() + "";
-//        sReturn += "/Max.: " + nCountOfElementsMax + ")";
-//        sReturn += " (Keys: ";
-//        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
-//        while (objIt.hasNext()) {
-//            objMapEntry = objIt.next();
-//            iCountPrint++;
-//            //i += pair.getKey() + pair.getValue();
-//            if (bFirstEl) bFirstEl = false;
-//            else sReturn += "; ";
-//            sReturn += objMapEntry.getKey();
-//            if (iCountPrint > nCountOfElementsMax2Print) {
-//                sReturn += "; ..";
-//                break;
-//            }
-//        }
-//        sReturn += ")";
-//        return sReturn;
         return toStringWithElem(22);
     }
-
-
-//    protected void cleanUp() {
-//        List    arrKey = new ArrayList<String>();
-//        Map.Entry<String, SoftReference<CacheObject>> objMapEntry = null;
-//
-//        //objCache.entrySet().removeIf(entry -> Optional.ofNullable(entry.getValue()).map(SoftReference::get)
-//        //        .map(CacheObject::isExpired)
-//        //        .orElse(false));
-//        if (objCache.size() < 1)
-//            return;
-//        Iterator<Map.Entry<String, SoftReference<CacheObject>>> objIt = objCache.entrySet().iterator();
-//        while (objIt.hasNext()) {
-//        //for (String sLoop : objCache.keySet()) {
-//            objMapEntry = objIt.next();
-//            CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
-//            if (objInCache != null) {
-//                if (objInCache.isExpired()) arrKey.add(objMapEntry.getKey());
-//            }
-//        }
-//        if (!arrKey.isEmpty()) {
-//            for (Object sLoop : arrKey) {
-//                remove((String) sLoop);
-//            }
-//        }
-//    }
 }

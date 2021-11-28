@@ -32,7 +32,7 @@ public class MemoryBCacheTest01 {
         objCache.add("A", Integer.valueOf(1), 1);
         System.out.println(".. after add > size: " + objCache.size() + " .. sleep ..");
         try { // Pause for X MilliSecond(s)
-            Thread.sleep(501);
+            Thread.sleep(1010);
         } catch (Exception ex) {
             System.err.println("test(): Interrupt exception!!" + " Msg.: " + ex.getMessage());
         }

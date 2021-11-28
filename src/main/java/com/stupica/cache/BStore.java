@@ -15,4 +15,6 @@ public interface BStore {
     void clear();
 
     long size();
+
+    String toStringShort();
 }
