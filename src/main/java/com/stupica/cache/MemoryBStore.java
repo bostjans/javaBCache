@@ -3,7 +3,7 @@ package com.stupica.cache;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class MemoryBStore extends MemoryBMap implements BStore {
+public class MemoryBStore extends MemoryBMap implements BCache {
 
     public MemoryBStore() {
         nCountOfElementsMax = nMAX_COUNT_ELEMENT_DEF;
@@ -15,42 +15,41 @@ public class MemoryBStore extends MemoryBMap implements BStore {
     }
 
 
-    protected void init() {
-        objCache = new ConcurrentHashMap<String, CacheObject>();
+    protected <T> void init() {
+        objCache = new ConcurrentHashMap<T, CacheObject>();
         nTsCleanUpLast = System.currentTimeMillis();
     }
-    protected void init(long anCountOfElementsMax) {
-        objCache = new ConcurrentHashMap<String, CacheObject>((int) anCountOfElementsMax);
+    protected <T> void init(long anCountOfElementsMax) {
+        objCache = new ConcurrentHashMap<T, CacheObject>((int) anCountOfElementsMax);
         nTsCleanUpLast = System.currentTimeMillis();
     }
 
 
-    protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
-        if (asKey == null)
+    protected <T> boolean addInternal(T atKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+        if (atKey == null)
             return false;
         if (objCache.size() >= nCountOfElementsMax)
             return false;
 
         if (aobjVal == null) {
-            objCache.remove(asKey);
+            objCache.remove(atKey);
         } else {
             long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
-            objCache.put(asKey, new CacheObject(aobjVal, adtValid, expiryTime));
+            objCache.put(atKey, new CacheObject(aobjVal, adtValid, expiryTime));
         }
         return true;
     }
 
-    @Override
-    public boolean addNotExist(String asKey, Object aobjVal, long aiPeriodInMillis) {
+    public <T> boolean addNotExist(T atKey, Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
 
-        if (asKey == null) {
+        if (atKey == null) {
             return false;
         }
-        if (objCache.containsKey(asKey)) {
+        if (objCache.containsKey(atKey)) {
             return false;
         }
-        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+        return addInternal(atKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
 
 

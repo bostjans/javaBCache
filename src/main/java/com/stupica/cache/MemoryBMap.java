@@ -1,37 +1,36 @@
 package com.stupica.cache;
 
-
 import java.util.*;
 
 
-public class MemoryBMap extends MemoryBBase{
+public class MemoryBMap extends MemoryBBase {
 
     protected Map objCache = null;
 
 
-    protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+    protected <T> boolean addInternal(T atKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
         return false;
     }
 
-    public boolean add(String asKey, Object aobjVal) {
-        return add(asKey, aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
+    public <T> boolean add(T atKey, Object aobjVal) {
+        return add(atKey, aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
     }
     //@Override
-    public boolean add(String asKey, Object aobjVal, long aiPeriodInMillis) {
+    public <T> boolean add(T atKey, Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
-        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+        return addInternal(atKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
 
     //@Override
-    public void remove(String asKey) {
-        objCache.remove(asKey);
+    public <T> void remove(T atKey) {
+        objCache.remove(atKey);
     }
 
-    protected CacheObject getCacheObjectNoCheck(String asKey) {
-        return (CacheObject) objCache.get(asKey);
+    protected <T> CacheObject getCacheObjectNoCheck(T atKey) {
+        return (CacheObject) objCache.get(atKey);
     }
-    protected CacheObject getCacheObject(String asKey) {
-        CacheObject objInCache = (CacheObject) objCache.get(asKey);
+    protected <T> CacheObject getCacheObject(T atKey) {
+        CacheObject objInCache = (CacheObject) objCache.get(atKey);
         if (objInCache != null) {
             if (objInCache.isExpired()) return null;
             objInCache.setLastUsedTimeNow();
@@ -40,15 +39,14 @@ public class MemoryBMap extends MemoryBBase{
         }
         return null;
     }
-    //@Override
-    public Object get(String asKey) {
+    public <T> Object get(T atKey) {
         //return Optional.ofNullable(objCache.get(asKey)).map(SoftReference::get)
         //        .filter(cacheObject -> !cacheObject.isExpired())
         //        .map(CacheObject::getValue)
         //        .orElse(null);
         cleanUp();
 
-        CacheObject objInCache = getCacheObject(asKey);
+        CacheObject objInCache = getCacheObject(atKey);
         if (objInCache != null) return objInCache.getValue();
         return null;
     }
@@ -137,37 +135,4 @@ public class MemoryBMap extends MemoryBBase{
         sReturn += ")";
         return sReturn;
     }
-
-
-//    protected static class CacheObject {
-//
-//        private long addTime;
-//        private long lastUsedTime;
-//        private long expiryTime;
-//        private long countUsed = 0L;
-//        private Object value;
-//
-//        public CacheObject(Object aobjVal, long anAddTime, long anExpiryTime) {
-//            //addTime = System.currentTimeMillis();
-//            addTime = anAddTime;
-//            expiryTime = anExpiryTime;
-//            value = aobjVal;
-//        }
-//        public long getAddTime() { return addTime; }
-//        public long getLastUsedTime() { return lastUsedTime; }
-//        public long getExpiryTime() { return expiryTime; }
-//        public long getCountUsed() { return countUsed; }
-//
-//        public void setExpiryTime(long anTime) { expiryTime = anTime; }
-//        public void setLastUsedTimeNow() { lastUsedTime = System.currentTimeMillis(); }
-//        public void incCount() { countUsed++; }
-//
-//        public Object getValue() { return value; }
-//        public void setValue(Object aobjVal) { value = aobjVal; }
-//
-//        boolean isExpired() {
-//            //System.out.println("isExpired(): TS: " + System.currentTimeMillis() + "; expiryTime: " + expiryTime);
-//            return System.currentTimeMillis() > expiryTime;
-//        }
-//    }
 }

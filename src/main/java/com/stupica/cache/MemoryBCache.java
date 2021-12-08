@@ -1,6 +1,5 @@
 package com.stupica.cache;
 
-
 import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,27 +28,27 @@ public class MemoryBCache extends MemoryBMap implements BCache {
     }
 
 
-    protected void init() {
-        objCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>();
+    protected <T> void init() {
+        objCache = new ConcurrentHashMap<T, SoftReference<CacheObject>>();
         nTsCleanUpLast = System.currentTimeMillis();
     }
-    protected void init(long anCountOfElementsMax) {
-        objCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>((int) anCountOfElementsMax);
+    protected <T> void init(long anCountOfElementsMax) {
+        objCache = new ConcurrentHashMap<T, SoftReference<CacheObject>>((int) anCountOfElementsMax);
         nTsCleanUpLast = System.currentTimeMillis();
     }
 
 
-    protected boolean addInternal(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
-        if (asKey == null)
+    protected <T> boolean addInternal(T atKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+        if (atKey == null)
             return false;
         if (objCache.size() >= nCountOfElementsMax)
             return false;
 
         if (aobjVal == null) {
-            objCache.remove(asKey);
+            objCache.remove(atKey);
         } else {
             long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
-            objCache.put(asKey, new SoftReference<>(new CacheObject(aobjVal, adtValid, expiryTime)));
+            objCache.put(atKey, new SoftReference<>(new CacheObject(aobjVal, adtValid, expiryTime)));
         }
         return true;
     }
@@ -60,44 +59,43 @@ public class MemoryBCache extends MemoryBMap implements BCache {
     //    return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     //}
     @Override
-    public boolean addNotExist(String asKey, Object aobjVal, long aiPeriodInMillis) {
+    public <T> boolean addNotExist(T atKey, Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
 
-        if (asKey == null) {
+        if (atKey == null) {
             return false;
         }
-        if (objCache.containsKey(asKey)) {
+        if (objCache.containsKey(atKey)) {
             return false;
         }
-        return addInternal(asKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+        return addInternal(atKey, aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
-    //@Override
-    public boolean addIfNewer(String asKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
+    public <T> boolean addIfNewer(T atKey, Object aobjVal, long adtValid, long aiPeriodInMillis) {
         cleanUp();
 
-        if (asKey == null) {
+        if (atKey == null) {
             return false;
         }
-        CacheObject objInCache = getCacheObject(asKey);
+        CacheObject objInCache = getCacheObject(atKey);
         if (objInCache != null) {
             if (objInCache.getAddTime() < adtValid) {
-                return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
+                return addInternal(atKey, aobjVal, adtValid, aiPeriodInMillis);
             }
         }
-        return addInternal(asKey, aobjVal, adtValid, aiPeriodInMillis);
+        return addInternal(atKey, aobjVal, adtValid, aiPeriodInMillis);
     }
 
 
-    protected CacheObject getCacheObjectNoCheck(String asKey) {
+    protected <T> CacheObject getCacheObjectNoCheck(T atKey) {
         CacheObject objInCache = null;
-        SoftReference objInCacheR = (SoftReference) objCache.get(asKey);
+        SoftReference objInCacheR = (SoftReference) objCache.get(atKey);
 
         if (objInCacheR != null)
             objInCache = (CacheObject) objInCacheR.get();
         return objInCache;
     }
-    protected CacheObject getCacheObject(String asKey) {
-        CacheObject objInCache = getCacheObjectNoCheck(asKey);
+    protected <T> CacheObject getCacheObject(T atKey) {
+        CacheObject objInCache = getCacheObjectNoCheck(atKey);
 
         if (objInCache != null) {
             if (objInCache.isExpired()) return null;

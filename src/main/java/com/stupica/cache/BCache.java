@@ -5,12 +5,12 @@ public interface BCache {
 
     void setCountOfElementsMax(long anCountOfElementsMax);
 
-    boolean add(String asKey, Object aobjValue, long aiPeriodInMillis);
-    boolean addNotExist(String asKey, Object aobjValue, long aiPeriodInMillis);
+    <T> boolean add(T atKey, Object aobjValue, long aiPeriodInMillis);
+    <T> boolean addNotExist(T atKey, Object aobjValue, long aiPeriodInMillis);
 
-    void remove(String asKey);
+    <T> void remove(T atKey);
 
-    Object get(String asKey);
+    <T> Object get(T atKey);
 
     void clear();
 
