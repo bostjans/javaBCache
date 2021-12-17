@@ -72,10 +72,10 @@ public class MemoryBMap extends MemoryBBase {
         return objCache.size();
     }
 
-    protected <E> void cleanUp() {
-        List                    arrKey = new ArrayList<String>();
-        Map.Entry<String, E>    objMapEntry = null;
-        long                    nTsCleanUpDelta;
+    protected <K, V> void cleanUp() {
+        List            arrKey = new ArrayList<K>();
+        Map.Entry<K, V> objMapEntry = null;
+        long            nTsCleanUpDelta;
 
         nTsCleanUpDelta = System.currentTimeMillis() - nTsCleanUpLast;
         if (nTsCleanUpDelta < nTsCleanUpDeltaMax) {
@@ -88,7 +88,7 @@ public class MemoryBMap extends MemoryBBase {
         //        .orElse(false));
         if (objCache.size() < 1)
             return;
-        Iterator<Map.Entry<String, E>> objIt = objCache.entrySet().iterator();
+        Iterator<Map.Entry<K, V>> objIt = objCache.entrySet().iterator();
         while (objIt.hasNext()) {
             objMapEntry = objIt.next();
             CacheObject objInCache = getCacheObjectNoCheck(objMapEntry.getKey());
@@ -97,8 +97,8 @@ public class MemoryBMap extends MemoryBBase {
             }
         }
         if (!arrKey.isEmpty()) {
-            for (Object sLoop : arrKey) {
-                remove((String) sLoop);
+            for (Object objLoop : arrKey) {
+                remove((K) objLoop);
             }
         }
     }
