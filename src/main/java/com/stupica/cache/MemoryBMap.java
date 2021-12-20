@@ -105,34 +105,33 @@ public class MemoryBMap extends MemoryBBase {
 
 
     public String toStringShort() {
-        return toStringWithElem(2);
+        return toStringWithElem(3);
     }
-    public <E> String toStringWithElem(int anCountOfElementsMax2Print) {
-        String  sReturn;
-        long    iCountPrint = 0;
-        long    iCountPrintMax = anCountOfElementsMax2Print;
-        boolean bFirstEl = true;
-        Map.Entry<String, E> objMapEntry = null;
+    public <K, V> String toStringWithElem(int anCountOfElementsMax2Print) {
+        StringBuilder   sReturn = new StringBuilder();
+        long            iCountPrint = 0;
+        long            iCountPrintMax = anCountOfElementsMax2Print;
+        boolean         bFirstEl = true;
+        Map.Entry<K, V> objMapEntry = null;
 
         if (iCountPrintMax > nCountOfElementsMax2Print)
             iCountPrintMax = nCountOfElementsMax2Print;
-        sReturn = "(Count: " + size() + "";
-        sReturn += "/Max.: " + nCountOfElementsMax + ")";
-        sReturn += " (Keys: ";
-        Iterator<Map.Entry<String, E>> objIt = objCache.entrySet().iterator();
+        sReturn.append("(Count: ").append(size());
+        sReturn.append("/Max.: ").append(nCountOfElementsMax).append(")");
+        sReturn.append(" (Keys: ");
+        Iterator<Map.Entry<K, V>> objIt = objCache.entrySet().iterator();
         while (objIt.hasNext()) {
             objMapEntry = objIt.next();
             iCountPrint++;
-            //i += pair.getKey() + pair.getValue();
             if (bFirstEl) bFirstEl = false;
-            else sReturn += "; ";
-            sReturn += objMapEntry.getKey();
+            else sReturn.append("; ");
+            sReturn.append(objMapEntry.getKey().toString());
             if (iCountPrint > iCountPrintMax) {
-                sReturn += "; ..";
+                sReturn.append("; ..");
                 break;
             }
         }
-        sReturn += ")";
-        return sReturn;
+        sReturn.append(")");
+        return sReturn.toString();
     }
 }
