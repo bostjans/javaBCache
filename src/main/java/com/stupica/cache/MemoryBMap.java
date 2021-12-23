@@ -46,6 +46,8 @@ public class MemoryBMap extends MemoryBBase {
         //        .orElse(null);
         cleanUp();
 
+        if (atKey == null)
+            return null;
         CacheObject objInCache = getCacheObject(atKey);
         if (objInCache != null) return objInCache.getValue();
         return null;
