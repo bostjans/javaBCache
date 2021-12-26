@@ -18,6 +18,7 @@ public class MemoryBBase {
 
     protected final long    nCountOfElementsMax2Print = 100;
     protected long          nCountOfElementsMax;
+    protected boolean       bShouldDeleteOldest = false;
 
     //protected long          nTsCreated = 0L;
     //protected long          nTsModifiedLast = 0L;
@@ -27,5 +28,8 @@ public class MemoryBBase {
 
     public void setCountOfElementsMax(long anCountOfElementsMax) {
         nCountOfElementsMax = anCountOfElementsMax;
+    }
+    public void setShouldDeleteOldest(boolean abVal) {
+        bShouldDeleteOldest = abVal;
     }
 }

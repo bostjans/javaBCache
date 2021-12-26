@@ -33,8 +33,12 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
         if (aobjVal == null)
             return true;
 
-        if (objCache.size() >= nCountOfElementsMax)
-            return false;
+        if (objCache.size() >= nCountOfElementsMax) {
+            if (bShouldDeleteOldest) {
+                cleanUpOldest();
+            } else
+                return false;
+        }
 
         long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
         if (objCache.add(new CacheObject(aobjVal, adtValid, expiryTime)))
@@ -46,8 +50,12 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
         if (aobjVal == null)
             return true;
 
-        if (objCache.size() >= nCountOfElementsMax)
-            return false;
+        if (objCache.size() >= nCountOfElementsMax) {
+            if (bShouldDeleteOldest) {
+                cleanUpOldest();
+            } else
+                return false;
+        }
 
         long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
         objCache.add(0, new CacheObject(aobjVal, adtValid, expiryTime));
@@ -139,6 +147,26 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
                 remove(objIndex.intValue());
             }
         }
+    }
+    protected void cleanUpOldest() {
+        int                 nIndex = 0;
+        int                 nIndexOldest = -1;
+        long                lOldest = Long.MAX_VALUE;
+
+        if (objCache.size() < 1)
+            return;
+        for (Object objLoop : objCache) {
+            CacheObject objInCache = (CacheObject)objLoop;
+            if (objInCache != null) {
+                if (lOldest > objInCache.getAddTime()) {
+                    lOldest = objInCache.getAddTime();
+                    nIndexOldest = nIndex;
+                }
+            }
+            nIndex++;
+        }
+        if (nIndexOldest >= 0)
+            objCache.remove(nIndexOldest);
     }
 
 

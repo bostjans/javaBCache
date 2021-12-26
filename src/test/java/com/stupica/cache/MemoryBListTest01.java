@@ -23,7 +23,7 @@ public class MemoryBListTest01 {
     public void add11() {
         // Initialization
         System.out.println("--");
-        System.out.println("Test: addThread11() - " + this.getClass().getName());
+        System.out.println("Test: add11() - " + this.getClass().getName());
 
         assertNotNull(objCache);
         objCache.add(Long.valueOf(1L), MemoryBBase.nPERIOD_05sec_InMILLIS);
@@ -36,7 +36,7 @@ public class MemoryBListTest01 {
 
         // Initialization
         System.out.println("--");
-        System.out.println("Test: addThread11() - " + this.getClass().getName());
+        System.out.println("Test: add15() - " + this.getClass().getName());
 
         assertNotNull(objCache);
         for (; iCount < 5; iCount++) {
@@ -59,7 +59,7 @@ public class MemoryBListTest01 {
 
         // Initialization
         System.out.println("--");
-        System.out.println("Test: addThread11() - " + this.getClass().getName());
+        System.out.println("Test: add16() - " + this.getClass().getName());
 
         assertNotNull(objCache);
         for (; iCount < 5; iCount++) {

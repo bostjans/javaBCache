@@ -5,7 +5,7 @@
     <!-- project coordinates .. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>cacheCore</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
     <name>cacheCore</name>
     <organization>
