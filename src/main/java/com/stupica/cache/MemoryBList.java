@@ -74,6 +74,15 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
         cleanUp();
         return addInternalBegin(aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
+    public boolean addAll(Collection aarrElement, long aiPeriodInMillis) {
+        boolean     bResult = false;
+
+        cleanUp();
+        for (Object objLoop : aarrElement) {
+            bResult = addInternal(objLoop, System.currentTimeMillis(), aiPeriodInMillis);
+        }
+        return bResult;
+    }
 
     //@Override
     public void remove(int aiIndex) {

@@ -10,7 +10,6 @@ public class CacheObject {
     private Object value;
 
     public CacheObject(Object aobjVal, long anAddTime, long anExpiryTime) {
-        //addTime = System.currentTimeMillis();
         addTime = anAddTime;
         expiryTime = anExpiryTime;
         value = aobjVal;
@@ -28,7 +27,6 @@ public class CacheObject {
     public void setValue(Object aobjVal) { value = aobjVal; }
 
     boolean isExpired() {
-        //System.out.println("isExpired(): TS: " + System.currentTimeMillis() + "; expiryTime: " + expiryTime);
         return System.currentTimeMillis() > expiryTime;
     }
 }

@@ -1,5 +1,6 @@
 package com.stupica.cache;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -10,6 +11,7 @@ public interface BStoreList {
 
     boolean add(Object aobjValue, long aiPeriodInMillis);
     boolean add2begin(Object aobjValue, long aiPeriodInMillis);
+    boolean addAll(Collection aarrElement, long aiPeriodInMillis);
 
     void remove(int aiIndex);
 
