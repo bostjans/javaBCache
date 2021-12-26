@@ -8,6 +8,7 @@ public interface BStoreList {
     void setCountOfElementsMax(long anCountOfElementsMax);
 
     boolean add(Object aobjValue, long aiPeriodInMillis);
+    boolean add2begin(Object aobjValue, long aiPeriodInMillis);
 
     void remove(int aiIndex);
 

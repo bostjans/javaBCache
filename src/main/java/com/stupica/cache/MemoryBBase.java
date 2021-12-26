@@ -3,6 +3,8 @@ package com.stupica.cache;
 
 public class MemoryBBase {
 
+    public static final int      nPERIOD_01sec_InMILLIS = 1000 * 01;
+    public static final int      nPERIOD_05sec_InMILLIS = 1000 * 05;
     public static final int      nPERIOD_01min_InMILLIS = 1000 * 60 * 01;
     public static final int      nPERIOD_05min_InMILLIS = 1000 * 60 * 05;
     public static final int      nPERIOD_10min_InMILLIS = 1000 * 60 * 10;

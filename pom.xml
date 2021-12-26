@@ -5,7 +5,7 @@
     <!-- project coordinates .. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>cacheCore</artifactId>
-    <version>1.3.4</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
     <name>cacheCore</name>
     <organization>
@@ -25,8 +25,6 @@
 
     <!-- library dependencies -->
     <dependencies>
-        <!--
-        -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -34,22 +32,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <!-- stupica.com - Developer404 Release Repository - ->
-        <repository>
-            <id>bDevRelease</id>
-            <name>Developer404 Repository</name>
-            <url>http://developer.stupica.com/maven</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        -->
-    </repositories>
 
     <build>
         <plugins>

@@ -30,16 +30,41 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
 
 
     protected boolean addInternal(Object aobjVal, long adtValid, long aiPeriodInMillis) {
-        return false;
+        if (aobjVal == null)
+            return true;
+
+        if (objCache.size() >= nCountOfElementsMax)
+            return false;
+
+        long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
+        if (objCache.add(new CacheObject(aobjVal, adtValid, expiryTime)))
+            return true;
+        else
+            return false;
+    }
+    protected boolean addInternalBegin(Object aobjVal, long adtValid, long aiPeriodInMillis) {
+        if (aobjVal == null)
+            return true;
+
+        if (objCache.size() >= nCountOfElementsMax)
+            return false;
+
+        long expiryTime = System.currentTimeMillis() + aiPeriodInMillis;
+        objCache.add(0, new CacheObject(aobjVal, adtValid, expiryTime));
+        return true;
     }
 
-    public boolean add(Object aobjVal) {
-        return add(aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
-    }
+    //public boolean add(Object aobjVal) {
+    //    return add(aobjVal, nPERIOD_RETENTION_SEC_DEF * 1000);
+    //}
     //@Override
     public boolean add(Object aobjVal, long aiPeriodInMillis) {
         cleanUp();
         return addInternal(aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
+    }
+    public boolean add2begin(Object aobjVal, long aiPeriodInMillis) {
+        cleanUp();
+        return addInternalBegin(aobjVal, System.currentTimeMillis(), aiPeriodInMillis);
     }
 
     //@Override
@@ -108,15 +133,17 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
             nIndex++;
         }
         Collections.sort(arrIndex);
-        for (int i = arrIndex.size() - 1; i < arrIndex.size(); i--) {
-            Integer objIndex = (Integer) arrIndex.get(i);
-            remove(objIndex.intValue());
+        if (!arrIndex.isEmpty()) {
+            for (int i = arrIndex.size() - 1; i < arrIndex.size(); i--) {
+                Integer objIndex = (Integer) arrIndex.get(i);
+                remove(objIndex.intValue());
+            }
         }
     }
 
 
     public String toStringShort() {
-        return toStringWithElem(2);
+        return toStringWithElem(4);
     }
     public String toStringWithElem(int anCountOfElementsMax2Print) {
         String  sReturn;
