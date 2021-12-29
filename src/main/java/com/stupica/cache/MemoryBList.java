@@ -151,7 +151,7 @@ public class MemoryBList extends MemoryBBase implements BStoreList {
         }
         Collections.sort(arrIndex);
         if (!arrIndex.isEmpty()) {
-            for (int i = arrIndex.size() - 1; i < arrIndex.size(); i--) {
+            for (int i = arrIndex.size() - 1; i >= 0 && i < arrIndex.size(); i--) {
                 Integer objIndex = (Integer) arrIndex.get(i);
                 remove(objIndex.intValue());
             }
