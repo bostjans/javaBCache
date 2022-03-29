@@ -26,3 +26,5 @@ Java (B)Cache library base. Provide simple Cache functionality.
 * https://github.com/ben-manes/caffeine
 * https://github.com/Cetsoft/imcache
 * http://commons.apache.org/proper/commons-jcs/
+
+* Java Simple Cache = https://farzinpashaeee.medium.com/java-simple-cache-b2fdb4b4e703
